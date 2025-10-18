@@ -4,15 +4,19 @@ import userRoutes from './handlers/users';
 import productRoutes from './handlers/products';
 import cartRoutes from './handlers/carts';
 import itemRoutes from './handlers/items';
+import { swaggerDocs } from './swagger';
 
 const app: express.Application = express();
 const address = 'http://localhost:3000';
 
 app.use(bodyParser.json());
+
 app.use(userRoutes);
 app.use(productRoutes);
 app.use(cartRoutes);
 app.use(itemRoutes);
+
+swaggerDocs(app as express.Express);
 
 app.get('/', async (req: Request, res: Response) => {
   res.send('Hello, CartFlow API is running!');

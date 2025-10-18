@@ -73,10 +73,14 @@ export class UserStore {
 
             const sql = 'SELECT * FROM users WHERE firstname=($1) AND lastname=($2)';
             const result = await conn.query(sql, [firstName, lastName]);
-            
             const user = result.rows[0];
+            // release connection early
+            conn.release();
 
-            if (user && (await bcrypt.compare(password + (process.env.BCRYPT_PASSWORD_SALT as string), user.password))) {
+            const pepper = process.env.BCRYPT_PASSWORD_SALT ? process.env.BCRYPT_PASSWORD_SALT as string : '';
+
+            // stored hash column is `password_hash` (see create()). Ensure it exists before comparing.
+            if (user && user.password_hash && (await bcrypt.compare(password + pepper, user.password_hash))) {
                 return user;
             }
             return null;

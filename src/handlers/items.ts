@@ -1,3 +1,156 @@
+/**
+ * @swagger
+ * tags:
+ *   - name: Items
+ *     description: Cart items management
+ */
+
+/**
+ * @swagger
+ * /api/items:
+ *   post:
+ *     summary: Add an item to a cart
+ *     tags: [Items]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cart_id
+ *               - product_id
+ *               - quantity
+ *               - price
+ *             properties:
+ *               cart_id:
+ *                 type: string
+ *               product_id:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *               price:
+ *                 type: number
+ *     responses:
+ *       '201':
+ *         description: Item added to cart
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 cart_id:
+ *                   type: string
+ *                 product_id:
+ *                   type: string
+ *                 quantity:
+ *                   type: integer
+ *                 price:
+ *                   type: number
+ */
+
+/**
+ * @swagger
+ * /api/items/{id}:
+ *   get:
+ *     summary: Get an item by ID
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Item object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 cart_id:
+ *                   type: string
+ *                 product_id:
+ *                   type: string
+ *                 quantity:
+ *                   type: integer
+ *                 price:
+ *                   type: number
+ *       '404':
+ *         description: Item not found
+ */
+
+/**
+ * @swagger
+ * /api/items/{id}:
+ *   delete:
+ *     summary: Remove an item from a cart (decrement or delete)
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Item removed (or quantity decremented)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 cart_id:
+ *                   type: string
+ *                 product_id:
+ *                   type: string
+ *                 quantity:
+ *                   type: integer
+ *                 price:
+ *                   type: number
+ */
+
+/**
+ * @swagger
+ * /api/carts/{cartId}/items:
+ *   get:
+ *     summary: Get items for a given cart
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Array of items in the cart
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   cart_id:
+ *                     type: string
+ *                   product_id:
+ *                     type: string
+ *                   quantity:
+ *                     type: integer
+ *                   price:
+ *                     type: number
+ */
+
 import express, { Request, Response } from 'express';
 import { ItemStore } from '../models/item';
 import { authorize as requireAuth } from '../services/auth';

@@ -179,8 +179,53 @@ The `models` implement the queries that realize these relations (e.g., `ItemStor
 - If migrations fail, ensure the environment variables for Postgres connection are set and that Postgres is reachable.
 - If JWT signing errors occur, ensure `TOKEN_SECRET` is set.
 
+## API documentation (Swagger)
+
+I added Swagger (OpenAPI) JSDoc comments to the handler files (`src/handlers/*.ts`) so the project can generate machine-readable API docs. Swagger (now part of the OpenAPI family) provides a standard, language-agnostic interface to RESTful APIs which:
+
+- Describes endpoints, request/response schemas and parameters.
+- Lets tools generate interactive documentation (Swagger UI), client SDKs, and server stubs.
+
+What I added
+- JSDoc-style `@swagger` blocks to `src/handlers/users.ts`, `src/handlers/products.ts`, `src/handlers/carts.ts`, and `src/handlers/items.ts` documenting the available routes and their request/response shapes.
+
+How to serve the docs locally
+
+1. Install the packages:
+
+```powershell
+npm install --save-dev swagger-jsdoc
+npm install --save swagger-ui-express
+```
+
+2. Add a small integration in `src/server.ts` (example snippet):
+
+```ts
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+const swaggerSpec = swaggerJSDoc({
+	definition: {
+		openapi: '3.0.0',
+		info: {
+			title: 'CartFlow API',
+			version: '1.0.0',
+		},
+	},
+	// point to the files containing annotations
+	apis: ['./src/handlers/*.ts'],
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+```
+
+3. Start the server and open `http://localhost:3000/api-docs` to see the interactive UI.
+
+Notes & next steps
+- The current JSDoc blocks are intentionally lightweight. For richer docs you can add `components` schemas and reuse them across endpoints.
+- I can add the exact integration to `src/server.ts` and update `package.json` scripts to launch with docs available. Would you like me to wire this up now?
+
 ## Next steps you might want
 
 - Add integration tests that run migrations against a test database and spin up the server.
-- Add Swagger/OpenAPI docs for the endpoints.
 - Harden authentication and add role-based access if necessary.
